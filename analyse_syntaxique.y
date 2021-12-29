@@ -12,30 +12,38 @@ int yyerror(char *s);
 	int in;
 }
 
-%token pvg not and coma or operComp type operArithmetique parg oprAff IF THEN PROGRAM Begin END FUNCTION RETURN dPoint ELSE VAR eql pard
+%token pvg coma type parg oprAff IF THEN PROGRAM Begin END FUNCTION RETURN dPoint ELSE VAR pard
 %token <in> entier
 %token <str> idf
+
+%left or
+%left and
+%left not
+%left operArithmetique
+%left operComp
 
 %start Programme
 
 %%
-Programme : PROGRAM idf Declaration Begin  Inst  END {printf("syntaxe correcte\n"); YYACCEPT;}
+Programme : PROGRAM idf Declaration Inst {printf("syntaxe correcte\n"); YYACCEPT;}
 ;
 
 Declaration : VAR idf dPoint type
 | VAR idf dPoint type pvg
 | VAR idf dPoint type pvg Declaration
+|
 ;
 
 Inst : affectation Inst 
-| Inst_IF Inst  
+| Inst_IF Inst
+| function Inst  
 | affectation 
 | Inst_IF 
 | function
-| function Inst
 | RETURN Inst
 | call_function Inst
 | call_function
+|
 ; 
 
 affectation : idf  oprAff  Exp  pvg
@@ -51,14 +59,12 @@ val : idf
 ;
 
 
-Inst_IF : IF parg  Liste_expres_logique  pard THEN Inst ELSE Inst
-| IF Expres_logique THEN Inst ELSE  Inst
+Inst_IF : IF parg  Liste_expres_logique  pard THEN Inst ELSE Begin Inst END
 | IF parg  Liste_expres_logique  pard THEN Inst
-| IF Expres_logique THEN Inst
 ;
 
-function : FUNCTION idf parg dec_param pard dPoint type Begin Inst END
-| FUNCTION idf parg pard dPoint type Begin Inst END
+function : FUNCTION idf parg dec_param pard dPoint type Begin Inst END pvg
+| FUNCTION idf parg pard dPoint type Begin Inst END pvg
 ;
 
 dec_param : idf dPoint type coma dec_param
@@ -85,16 +91,14 @@ Expres_logique : Exp  operComp  Exp
 operLog : and | or
 ;
 
-
-
 %%
 
-int yyerror(char* msg){
+int yyerror(char* msg) {
 	printf("%s line %d column %d\n", msg, ligne, colonne);
 	return 0;
 }
 
-int main(){
+int main() {
 	yyparse();
 	return 0;
 }
