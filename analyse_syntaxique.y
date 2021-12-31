@@ -25,13 +25,16 @@ int yyerror(char *s);
 %start Programme
 
 %%
-Programme : PROGRAM idf Declaration Inst {printf("syntaxe correcte\n"); YYACCEPT;}
+Programme : PROGRAM idf Declaration Inst END pvg {printf("syntaxe correcte\n"); YYACCEPT;}
 ;
 
-Declaration : VAR idf dPoint type
-| VAR idf dPoint type pvg
-| VAR idf dPoint type pvg Declaration
+Declaration : VAR ListeVar
 |
+;
+
+ListeVar : idf dPoint type
+| idf dPoint type pvg
+| idf dPoint type pvg ListeVar
 ;
 
 Inst : affectation Inst 
@@ -40,10 +43,9 @@ Inst : affectation Inst
 | affectation 
 | Inst_IF 
 | function
-| RETURN Inst
+| RETURN Exp
 | call_function Inst
 | call_function
-|
 ; 
 
 affectation : idf  oprAff  Exp  pvg
@@ -61,14 +63,18 @@ val : idf
 
 Inst_IF : IF parg  Liste_expres_logique  pard THEN Inst ELSE Begin Inst END
 | IF parg  Liste_expres_logique  pard THEN Inst
+| IF Expres_logique THEN Inst
+| IF Expres_logique THEN Begin Inst END
+| IF Expres_logique THEN Inst ELSE Inst
+| IF Expres_logique THEN Inst ELSE Begin Inst END
 ;
 
-function : FUNCTION idf parg dec_param pard dPoint type Begin Inst END pvg
-| FUNCTION idf parg pard dPoint type Begin Inst END pvg
+function : FUNCTION idf parg dec_param pard dPoint type Begin Inst END
 ;
 
 dec_param : idf dPoint type coma dec_param
 | idf dPoint type
+|
 ;
 
 call_function : idf parg pard
