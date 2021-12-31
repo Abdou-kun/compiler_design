@@ -9,7 +9,7 @@ int ligne = 1, colonne = 0, i;
 
 /* Definitions regulieres */
 
-entier "-"?[0-9][0-9]*
+entier "-"?[0-9]+
 
 operArithmetique "+"|"-"|"*"|"/"
 
@@ -17,7 +17,7 @@ blanc " "
 
 operComp "<"|">"|"<="|">="|"="|"!="
 
-identificateur [a-z]([a-z]|[0-9]|"_")*([a-z]|[0-9])?
+identificateur [a-z](([a-z]|[0-9]|"_")*([a-z]|[0-9]))?
 
 commentaire ("/*"(.|\n)*"*/")|("//"[^\n]*)
 
@@ -41,8 +41,8 @@ INT { colonne += yyleng; return type;}
 ")" { colonne++; return pard;}
 ";" { colonne++; return pvg;}
 ":" { colonne++; return dPoint;}
-"|" { colonne++; return or;}
-"&" { colonne++; return and;}
+"||" { colonne++; return or;}
+"&&" { colonne++; return and;}
 [\t] {colonne += yyleng;}
 \n {ligne++; colonne=0;}
 {blanc} {colonne++;}
