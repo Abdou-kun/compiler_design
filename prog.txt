@@ -2,12 +2,17 @@ PROGRAM test
 
 VAR n : INT
 
-FUNCTION fib ( i : INT, j : INT ) : INT
+FUNCTION fib ( i : INT, j : INT, x : INT ) : INT
     BEGIN 
-        IF n = 0 THEN RETURN i
-            ELSE IF n = 1 THEN RETURN j
+        IF (n = 0 & x = 1) THEN RETURN i
+            ELSE
+                BEGIN
+                    IF (n = 1) THEN RETURN j
                     ELSE
                         BEGIN
-                         n := n-1; fib(j, i+j)
+                         n := n;
+                         fib(j, i+j)
                         END
-    END;
+                END
+    END
+END;
